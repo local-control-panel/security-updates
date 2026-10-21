@@ -1,0 +1,144 @@
+{
+  "schemaVersion": 1,
+  "sequence": 2,
+  "publishedAt": "2026-10-21T19:21:39Z",
+  "expiresAt": "2026-11-20T19:21:39Z",
+  "advisories": [
+    {
+      "id": "php-critical-rce-2026-10",
+      "title": "Critical PHP vulnerabilities: update web-serving runtimes",
+      "severity": "critical",
+      "status": "action-required",
+      "publishedAt": "2026-10-21T14:00:00Z",
+      "updatedAt": "2026-10-21T19:21:39Z",
+      "summary": "PHP has released fixes for two vulnerabilities that can allow unauthenticated remote code execution. Official Local Control Panel FrankenPHP 1.13.2 replacement rules are available for the explicitly listed affected PHP 8.3, 8.4 and 8.5 image digests. Automatic application requires engine support and an enabled server policy.",
+      "affected": [
+        "PHP installations serving web requests, including PHP-FPM, mod_php, CGI, FrankenPHP and LiteSpeed.",
+        "Package versions require vendor-aware assessment: distributions may backport fixes."
+      ],
+      "recommendations": [
+        "Update to PHP 8.2.35, 8.3.36, 8.4.27 or 8.5.12, or a later supported release containing these fixes; consult the distribution vendor for backported packages.",
+        "For container deployments, use a verified patched image and replace the running containers. Downloading an image alone does not update the serving runtime.",
+        "Confirm the active web runtime after replacement. Temporary mitigations are incomplete; follow the upstream advisory."
+      ],
+      "references": [
+        {
+          "label": "PHP official security advisory",
+          "url": "https://www.php.net/archive/2026.php#2026-10-21-1"
+        },
+        {
+          "label": "FrankenPHP 1.13.2 security release",
+          "url": "https://github.com/php/frankenphp/releases/tag/v1.13.2"
+        },
+        {
+          "label": "Official Local Control Panel FrankenPHP images",
+          "url": "https://github.com/local-control-panel/images/pkgs/container/frankenphp"
+        },
+        {
+          "label": "Official image build",
+          "url": "https://github.com/local-control-panel/images/actions/runs/39659912679"
+        }
+      ],
+      "cves": [
+        "CVE-2026-109618",
+        "CVE-2026-109619"
+      ]
+    }
+  ],
+  "fixes": [
+    {
+      "id": "frankenphp-php83-php2shell",
+      "version": "1.0.0",
+      "advisoryId": "php-critical-rce-2026-10",
+      "title": "Official FrankenPHP 1.13.2 / PHP 8.3.36 image replacement",
+      "minEngine": "0.1.0",
+      "platforms": [
+        "linux/amd64",
+        "linux/arm64"
+      ],
+      "capabilities": [
+        "security.dockerImageReplace"
+      ],
+      "requiresRestart": true,
+      "disruption": "Recreate the matched engine-managed PHP 8.3 runtime container; sites sharing that runtime may briefly disconnect. Keep the existing environment, networks and volumes.",
+      "recovery": "Restore the recorded previous image and component configuration if health verification fails. A rollback to an affected image leaves this advisory unresolved. No application or database migration is included.",
+      "review": {
+        "source": "https://github.com/local-control-panel/images/blob/55935f3a3c1eb7c78372105e5ec18f15babe2da3/frankenphp/Dockerfile",
+        "evidence": "https://github.com/local-control-panel/images/actions/runs/39659912679"
+      },
+      "action": {
+        "type": "docker.image.replace",
+        "component": "php-runtime",
+        "fromImages": [
+          "ghcr.io/local-control-panel/frankenphp@sha256:51c9e8e2850e31a5520c0037423d9975738bd2346cf43c23eead89105af4150f",
+          "ghcr.io/local-control-panel/frankenphp@sha256:62260cf26cc61b27b6437a1a047d6aa68d5c4cfae68c2c8aa302397fde40c225",
+          "ghcr.io/local-control-panel/frankenphp@sha256:a9e599f2ef36373f981bff9a66769330cfd656af94c6eb88191369ede4e54e36"
+        ],
+        "toImage": "ghcr.io/local-control-panel/frankenphp@sha256:32e814345ffb2550653e2b897c1032894239d1c9aec222badb1ceaf499cb566e"
+      }
+    },
+    {
+      "id": "frankenphp-php84-php2shell",
+      "version": "1.0.0",
+      "advisoryId": "php-critical-rce-2026-10",
+      "title": "Official FrankenPHP 1.13.2 / PHP 8.4.27 image replacement",
+      "minEngine": "0.1.0",
+      "platforms": [
+        "linux/amd64",
+        "linux/arm64"
+      ],
+      "capabilities": [
+        "security.dockerImageReplace"
+      ],
+      "requiresRestart": true,
+      "disruption": "Recreate the matched engine-managed PHP 8.4 runtime container; sites sharing that runtime may briefly disconnect. Keep the existing environment, networks and volumes.",
+      "recovery": "Restore the recorded previous image and component configuration if health verification fails. A rollback to an affected image leaves this advisory unresolved. No application or database migration is included.",
+      "review": {
+        "source": "https://github.com/local-control-panel/images/blob/55935f3a3c1eb7c78372105e5ec18f15babe2da3/frankenphp/Dockerfile",
+        "evidence": "https://github.com/local-control-panel/images/actions/runs/39659912679"
+      },
+      "action": {
+        "type": "docker.image.replace",
+        "component": "php-runtime",
+        "fromImages": [
+          "ghcr.io/local-control-panel/frankenphp@sha256:5f856a2605cab76a1ccd9dc4fa3f49e67efd78772b0738c2f9309693d28c3a75",
+          "ghcr.io/local-control-panel/frankenphp@sha256:930c5baaaa42749ec89a82bb99f16a5afea32d4fb1a3753ea9442504bdb57f93",
+          "ghcr.io/local-control-panel/frankenphp@sha256:87cd868031ead4717820fd523ee37dad215dccfca97cb46371ee38318f4ec2ac"
+        ],
+        "toImage": "ghcr.io/local-control-panel/frankenphp@sha256:5ec9ac3e2238d211af231645a0f98dfd0ef6907cec9c5a3ec9bc4b479213baf0"
+      }
+    },
+    {
+      "id": "frankenphp-php85-php2shell",
+      "version": "1.0.0",
+      "advisoryId": "php-critical-rce-2026-10",
+      "title": "Official FrankenPHP 1.13.2 / PHP 8.5.12 image replacement",
+      "minEngine": "0.1.0",
+      "platforms": [
+        "linux/amd64",
+        "linux/arm64"
+      ],
+      "capabilities": [
+        "security.dockerImageReplace"
+      ],
+      "requiresRestart": true,
+      "disruption": "Recreate the matched engine-managed PHP 8.5 runtime container; sites sharing that runtime may briefly disconnect. Keep the existing environment, networks and volumes.",
+      "recovery": "Restore the recorded previous image and component configuration if health verification fails. A rollback to an affected image leaves this advisory unresolved. No application or database migration is included.",
+      "review": {
+        "source": "https://github.com/local-control-panel/images/blob/55935f3a3c1eb7c78372105e5ec18f15babe2da3/frankenphp/Dockerfile",
+        "evidence": "https://github.com/local-control-panel/images/actions/runs/39659912679"
+      },
+      "action": {
+        "type": "docker.image.replace",
+        "component": "php-runtime",
+        "fromImages": [
+          "ghcr.io/local-control-panel/frankenphp@sha256:73c22f201c89cc57355c960497669e656946f05aaf7cddb606a613697212d39c",
+          "ghcr.io/local-control-panel/frankenphp@sha256:50121baf633731582f05a0e6d36006765efedf0e438e7788e71492a688202884",
+          "ghcr.io/local-control-panel/frankenphp@sha256:63ae4d5d65e4d3964bb9309519e0053041e6800e53c34af91322d67ed562dc63"
+        ],
+        "toImage": "ghcr.io/local-control-panel/frankenphp@sha256:ce5340d6017277c1ec8a350e2c10f4fcc1ba4f46a41d48d7787daddb53302c45"
+      }
+    }
+  ],
+  "revoked": []
+}

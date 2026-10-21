@@ -1,0 +1,108 @@
+{
+  "checkedAt": "2026-10-21T19:21:39Z",
+  "repository": "https://github.com/local-control-panel/images",
+  "package": "ghcr.io/local-control-panel/frankenphp",
+  "buildRun": "https://github.com/local-control-panel/images/actions/runs/39659912679",
+  "buildCommit": "55935f3a3c1eb7c78372105e5ec18f15babe2da3",
+  "notes": [
+    "Previous embedded PHP versions were read from the official arm64 images before replacement.",
+    "Replacement images were checked on both amd64 and arm64: normal container entrypoint/liveness, HTTP PHP version, PHP minor and ZTS.",
+    "Only the listed previous official OCI index/platform digests are automatic replacement candidates.",
+    "No engine consumer or client execution is implemented by this catalog release."
+  ],
+  "runtimes": {
+    "8.3": {
+      "previous": {
+        "ref": "ghcr.io/local-control-panel/frankenphp:1-php8.3",
+        "digest": "sha256:51c9e8e2850e31a5520c0037423d9975738bd2346cf43c23eead89105af4150f",
+        "platforms": {
+          "linux/amd64": "sha256:62260cf26cc61b27b6437a1a047d6aa68d5c4cfae68c2c8aa302397fde40c225",
+          "linux/arm64": "sha256:a9e599f2ef36373f981bff9a66769330cfd656af94c6eb88191369ede4e54e36"
+        },
+        "phpVersion": "8.3.35"
+      },
+      "replacement": {
+        "tag": "ghcr.io/local-control-panel/frankenphp:1.13.2-php8.3",
+        "digest": "sha256:32e814345ffb2550653e2b897c1032894239d1c9aec222badb1ceaf499cb566e",
+        "platforms": {
+          "linux/arm64": "sha256:6d19951a9d50e126030b6cd481de61644eeb314fef8d26a8db21a9afa30b3cc5",
+          "linux/amd64": "sha256:d3918f44d2ddf617c2b1c20ebc81edf43c0c81ebbffb0a47b90b77f12fa6c66b"
+        },
+        "verification": {
+          "linux/arm64": {
+            "php": "8.3.36",
+            "minor": "8.3",
+            "zts": 1
+          },
+          "linux/amd64": {
+            "php": "8.3.36",
+            "minor": "8.3",
+            "zts": 1
+          }
+        }
+      }
+    },
+    "8.4": {
+      "previous": {
+        "ref": "ghcr.io/local-control-panel/frankenphp:1-php8.4",
+        "digest": "sha256:5f856a2605cab76a1ccd9dc4fa3f49e67efd78772b0738c2f9309693d28c3a75",
+        "platforms": {
+          "linux/amd64": "sha256:930c5baaaa42749ec89a82bb99f16a5afea32d4fb1a3753ea9442504bdb57f93",
+          "linux/arm64": "sha256:87cd868031ead4717820fd523ee37dad215dccfca97cb46371ee38318f4ec2ac"
+        },
+        "phpVersion": "8.4.26"
+      },
+      "replacement": {
+        "tag": "ghcr.io/local-control-panel/frankenphp:1.13.2-php8.4",
+        "digest": "sha256:5ec9ac3e2238d211af231645a0f98dfd0ef6907cec9c5a3ec9bc4b479213baf0",
+        "platforms": {
+          "linux/arm64": "sha256:e0fd4ed96b65a56a36893a2daa6b65229664f78acf6010f9a66ae9f9b6be8185",
+          "linux/amd64": "sha256:d4e3e0713e39f86185a485e5cdaa1e8404b66cf0ba6a2e39c69c14d1bdbb8861"
+        },
+        "verification": {
+          "linux/arm64": {
+            "php": "8.4.27",
+            "minor": "8.4",
+            "zts": true
+          },
+          "linux/amd64": {
+            "php": "8.4.27",
+            "minor": "8.4",
+            "zts": true
+          }
+        }
+      }
+    },
+    "8.5": {
+      "previous": {
+        "ref": "ghcr.io/local-control-panel/frankenphp:1-php8.5",
+        "digest": "sha256:73c22f201c89cc57355c960497669e656946f05aaf7cddb606a613697212d39c",
+        "platforms": {
+          "linux/amd64": "sha256:50121baf633731582f05a0e6d36006765efedf0e438e7788e71492a688202884",
+          "linux/arm64": "sha256:63ae4d5d65e4d3964bb9309519e0053041e6800e53c34af91322d67ed562dc63"
+        },
+        "phpVersion": "8.5.11"
+      },
+      "replacement": {
+        "tag": "ghcr.io/local-control-panel/frankenphp:1.13.2-php8.5",
+        "digest": "sha256:ce5340d6017277c1ec8a350e2c10f4fcc1ba4f46a41d48d7787daddb53302c45",
+        "platforms": {
+          "linux/amd64": "sha256:97fa88a36b336e7162a5bbaa0c31482910d449996f96519a698e2c84186e2325",
+          "linux/arm64": "sha256:38955c1c1c7913d78ecb235ed26bbd750ca09c4ada58ed00ce7cc152004914f7"
+        },
+        "verification": {
+          "linux/amd64": {
+            "php": "8.5.12",
+            "minor": "8.5",
+            "zts": true
+          },
+          "linux/arm64": {
+            "php": "8.5.12",
+            "minor": "8.5",
+            "zts": true
+          }
+        }
+      }
+    }
+  }
+}
