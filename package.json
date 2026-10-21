@@ -10,11 +10,12 @@
     "seal": "node scripts/seal.mjs",
     "build": "node scripts/build.mjs",
     "test": "node --test",
-    "check": "npm test && npm run build",
+    "check": "pnpm test && pnpm build",
     "dev": "node scripts/serve.mjs"
   },
   "devDependencies": {
     "ajv": "8.20.0",
     "ajv-formats": "3.0.1"
-  }
+  },
+  "packageManager": "pnpm@12.14.0"
 }
