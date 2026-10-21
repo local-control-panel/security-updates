@@ -96,3 +96,44 @@ test('sealed manifest cannot change, including through a future serializer chang
   await writeFile(path, JSON.stringify(data));
   await assert.rejects(loadCatalog(root), /Sealed manifest changed/);
 });
+
+async function addImageRule(root) {
+  const from = 'ghcr.io/local-control-panel/frankenphp@sha256:' + 'a'.repeat(64);
+  const to = 'ghcr.io/local-control-panel/frankenphp@sha256:' + 'b'.repeat(64);
+  const release = await change(root, r => r.fixes.push({
+    id:'php-image-replacement',version:'1.0.0',advisoryId:r.advisories[0].id,
+    title:'Replace affected PHP image',minEngine:'1.0.0',platforms:['linux/amd64'],
+    capabilities:['security.dockerImageReplace'],requiresRestart:true,
+    disruption:'Recreate the managed runtime container',recovery:'Restore previous configuration and report unresolved',
+    review:{source:'https://example.com/review',evidence:'https://example.com/evidence'},
+    action:{type:'docker.image.replace',component:'php-runtime',fromImages:[from],toImage:to}
+  }));
+  return release.fixes.at(-1);
+}
+test('declarative image replacement publishes exact digests without scripts', async t => {
+  const root=await fixture(t); const rule=await addImageRule(root); await build(root);
+  const manifest=JSON.parse(await readFile(join(root,'dist/releases/000001/manifest.json')));
+  assert.deepEqual(manifest.fixes[0].action,rule.action);
+  assert.equal(manifest.fixes[0].artifacts,undefined);
+  assert.equal(manifest.fixes[0].execution,'operator-policy-required');
+});
+test('image rules reject moving tags, empty targets, mixed scripts, unknown actions and undeclared restarts', async t => {
+  for (const mutate of [
+    f=>f.action.toImage='ghcr.io/local-control-panel/frankenphp:latest',
+    f=>f.action.fromImages=['ghcr.io/local-control-panel/frankenphp:8.4'],
+    f=>f.action.fromImages=[],
+    f=>f.action.toImage=f.action.fromImages[0],
+    f=>f.action.type='docker.run',
+    f=>f.action.command='rm -rf /',
+    f=>f.capabilities=['test.fixture'],
+    f=>f.requiresRestart=false,
+    f=>f.apply={file:'apply.sh',runtime:'bash'}
+  ]) {
+    const root=await fixture(t); await addImageRule(root); await change(root,r=>mutate(r.fixes[0]));
+    await assert.rejects(loadCatalog(root, {allowUnsealed:true}));
+  }
+});
+test('existing sealed catalog bytes remain unchanged after adding the new rule form', async t => {
+  const root=await fixture(t); const [release]=await loadCatalog(root);
+  assert.equal(release.digest,(await readFile(join(root,'releases/000001.sha256'),'utf8')).trim());
+});

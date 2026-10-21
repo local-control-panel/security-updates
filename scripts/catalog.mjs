@@ -40,10 +40,19 @@ export async function loadCatalog(root, { allowUnsealed = false } = {}) {
       if (!advisoryIds.has(fix.advisoryId)) throw new Error(`Unknown advisory: ${fix.advisoryId}`);
       if (!fix.platforms.length || !fix.capabilities.length) throw new Error('Fix needs explicit platforms and capabilities');
       const identity = `${fix.id}@${fix.version}`;
-      const transformed = { ...fix, execution: 'operator-policy-required', artifacts: {} };
-      delete transformed.check; delete transformed.apply; delete transformed.verify;
+      const transformed = fix.action
+        ? { ...fix, execution: 'operator-policy-required' }
+        : { ...fix, execution: 'operator-policy-required', artifacts: {} };
+      if (!fix.action) {
+        delete transformed.check; delete transformed.apply; delete transformed.verify;
+      }
       const content = [];
-      for (const phase of ['check', 'apply', 'verify']) {
+      if (fix.action) {
+        if (!fix.capabilities.includes('security.dockerImageReplace')) throw new Error('Image replacement requires security.dockerImageReplace capability');
+        if (!fix.requiresRestart) throw new Error('Image replacement must declare a restart');
+        if (fix.action.fromImages.includes(fix.action.toImage)) throw new Error('Replacement image is already listed as affected');
+      }
+      for (const phase of fix.action ? [] : ['check', 'apply', 'verify']) {
         const asset = fix[phase];
         if ((asset.runtime === 'bash') !== asset.file.endsWith('.sh')) throw new Error('Runtime does not match asset extension');
         const relative = `payloads/${fix.id}/${fix.version}/${asset.file}`;

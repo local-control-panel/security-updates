@@ -4,18 +4,6 @@ Public security advisories and reviewed remediation packages from [Local Control
 
 **Current scope:** the catalog publisher, public website, package validation and engine integration contract. The Operations Engine consumer, unattended execution and panel integration are separate work. The initial PHP advisory has **no executable fix**: this repository does not claim to have patched any server.
 
-## Run locally
-
-Node.js 22 or newer:
-
-```sh
-npm ci --ignore-scripts
-npm run check
-npm run dev
-```
-
-Open http://127.0.0.1:4321. Build output is `dist/`. There is no server runtime, database, telemetry or browser dependency bundle. Browser JavaScript only filters the already-rendered records and flags an expired catalog; the content remains readable without it.
-
 ## Cloudflare Pages
 
 Connect this repository through **Workers & Pages → Create → Pages → Connect to Git**:
@@ -40,7 +28,7 @@ Before connecting production, verify the repository ruleset requires the `check`
 
 1. Open an issue or PR with an authoritative upstream source and affected platforms.
 2. Copy the most recent `releases/NNNNNN.json` into the next sequence. Each file is a **full catalog snapshot**; retain previous advisories, relevant fixes and every revocation. Set current `publishedAt` and an `expiresAt` at most 31 days later. Increase the filename and `sequence` together.
-3. For a fix, add immutable files in `payloads/<id>/<version>/`. Supply check/apply/verify entrypoints and platform, capability, restart, recovery and review/test evidence metadata. The build computes every payload hash and size. See [the contract](docs/feed-contract.md).
+3. For a Docker image replacement, declare the managed component, affected image digests and the tested replacement digest using `action.type: "docker.image.replace"`; no downloaded shell scripts are needed. For a custom fix, add immutable check/apply/verify entrypoints in `payloads/<id>/<version>/`. Both forms require platform, capability, restart, recovery and review/test evidence metadata. See [the contract](docs/feed-contract.md).
 4. Run `npm run seal` to record the new manifest checksum, then `npm run check`. Commit the new `.sha256` beside the snapshot. Sealing refuses to overwrite a changed existing checksum. Review the preview, acquire owner approval and merge.
 
 Never edit a published release snapshot or payload version; CI rejects this on PRs. Updates and withdrawals use a new snapshot; changed fix content or metadata needs a new fix version. Revocations are permanent and must be carried forward. Unreferenced local files are not copied into `dist`.

@@ -26,15 +26,44 @@ Persist the highest accepted sequence and its manifest hash on the server. Lower
 
 ## Release manifest
 
-Every `releases/NNNNNN.json` is a complete source snapshot. Its `.sha256` sidecar freezes the generated manifest bytes, including against accidental future serializer changes. New snapshots are sealed with `npm run seal`. Source snapshots are validated against [`release.schema.json`](../schemas/release.schema.json). The generated manifest has the same advisories, sequence, timestamps and revocations. For fixes, source `check`, `apply`, `verify` fields are replaced by `artifacts`, with relative paths, byte counts, runtimes and SHA-256. Paths are relative to that manifest's directory, e.g. `fixes/php-runtime-update/1.0.0/check.sh`.
+Every `releases/NNNNNN.json` is a complete source snapshot. Its `.sha256` sidecar freezes the generated manifest bytes, including against accidental future serializer changes. New snapshots are sealed with `npm run seal`. Source snapshots are validated against [`release.schema.json`](../schemas/release.schema.json). The generated manifest has the same advisories, sequence, timestamps and revocations. For script fixes, source `check`, `apply`, `verify` fields are replaced by `artifacts`, with relative paths, byte counts, runtimes and SHA-256. Declarative fixes retain their `action` unchanged and have no script artifacts. Paths are relative to that manifest's directory, e.g. `fixes/php-runtime-update/1.0.0/check.sh`.
 
 Advisory status describes the publisher's record, not the client machine. In particular, `resolved` is not a per-server verification result. No package means no automated remediation for that advisory. An advisory marked `withdrawn` must not authorize a new automatic execution. Revocations are `(id, version, reason)` entries. They prohibit new execution but do not automatically revert previously applied changes.
 
 The engine must reject sequence/date inconsistency between index and manifest, unknown advisory references, unknown runtimes, missing required capabilities, incompatible engine versions, or insufficiently specific platform matching. Do not infer compatibility from a matching PHP version string alone: account for vendor backports and the actual serving runtime/container.
 
+## Docker image replacement rule
+
+For a known container image vulnerability, prefer a declarative action over downloaded scripts. The rule says **which managed component, which affected image digests, and which tested replacement image**. The engine owns the replacement procedure.
+
+Example of the `action` field (illustrative digests, **not a published fix**):
+
+```json
+{
+  "type": "docker.image.replace",
+  "component": "php-runtime",
+  "fromImages": [
+    "ghcr.io/local-control-panel/frankenphp@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  ],
+  "toImage": "ghcr.io/local-control-panel/frankenphp@sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+}
+```
+
+The surrounding fix still needs ID/version, advisory, supported platforms, minimum engine, review/test evidence and recovery metadata. It must declare `requiresRestart: true` and the proposed engine capability `security.dockerImageReplace`. A rule cannot also supply script entrypoints. Mutable tags, an empty affected-image list and a replacement that is itself listed as affected are rejected by the publisher. The example is only documentation; its images are not verified and it is not included in the feed.
+
+The engine capability is **not implemented yet**. Its required behavior:
+
+1. Resolve `component` against its own inventory of engine-managed services. This is not a container name or permission to update arbitrary containers. Select only a matching managed component and affected current digest on a declared supported platform; skip unknown/custom layouts. If the target digest is already active, verify it and avoid another replacement.
+2. Reconcile the running image's local image ID with the registry/index/platform digest. A string in a Compose file or an old cached inventory is insufficient. Require a target image compatible with the component's PHP minor version, extensions, architecture, configuration and volume layout; automatic data/schema migrations are outside this action.
+3. Check the server policy, restart window, target health prerequisites and recovery readiness, acquire the normal operation lock and persist the exact current configuration/image for recovery. Pull the exact target digest and verify the platform image before changing the serving runtime.
+4. Update the engine-owned desired state to that image and recreate only the selected container/service. Preserve the existing environment, secrets, ports, networks and volume mounts through the normal managed deployment pipeline. Never use `compose down -v`, renew volumes or rebuild a container from guessed defaults. Pulling an image or restarting the old container does not replace its image.
+5. Verify the active image identity, expected PHP/runtime state and component/application health before marking fixed. On failure, use the recorded compatible recovery procedure; restoring an affected image leaves the advisory unresolved.
+
+Docker Compose documents that an image/configuration change recreates the service while preserving mounted volumes: [docker compose up](https://docs.docker.com/reference/cli/docker/compose/up/). The engine must additionally implement the inventory, policy and verification checks above. Review evidence must demonstrate that the chosen replacement actually contains the security patch; the catalog cannot establish that from a digest alone.
+
 ## Execution package
 
-A fix declares `id`, semantic `version`, `advisoryId`, `title`, `minEngine`, exact `platforms`, required engine `capabilities`, `requiresRestart`, `disruption`, `recovery`, and `review.source` / `review.evidence` URLs. The build requires three separate entrypoints, using `bash` (`.sh`) or `python3` (`.py`). All three are integrity-checked before any executes. Package scripts are self-contained and may not fetch unversioned/unverified executable code. Dependencies require an explicit future contract extension; they are not implicitly trusted.
+A fix declares `id`, semantic `version`, `advisoryId`, `title`, `minEngine`, exact `platforms`, required engine `capabilities`, `requiresRestart`, `disruption`, `recovery`, and `review.source` / `review.evidence` URLs. For custom script fixes, the build requires three separate entrypoints, using `bash` (`.sh`) or `python3` (`.py`). All three are integrity-checked before any executes. Package scripts are self-contained and may not fetch unversioned/unverified executable code. Dependencies require an explicit future contract extension; they are not implicitly trusted.
 
 Proposed execution protocol for engine implementation:
 
