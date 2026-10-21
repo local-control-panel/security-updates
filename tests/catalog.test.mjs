@@ -16,7 +16,11 @@ const source = resolve(import.meta.dirname, '..');
 async function fixture(t) {
   const root = await mkdtemp(join(tmpdir(), 'lcp-security-'));
   t.after(() => rm(root, { recursive:true, force:true }));
-  for (const dir of ['schemas','releases','web']) await cp(join(source,dir), join(root,dir), { recursive:true });
+  for (const dir of ['schemas','web']) await cp(join(source,dir), join(root,dir), { recursive:true });
+  // Build each test scenario from the immutable bootstrap, independently of
+  // subsequent public releases, which the real production build validates.
+  await mkdir(join(root, 'releases'));
+  for (const file of ['000001.json','000001.sha256']) await cp(join(source,'releases',file), join(root,'releases',file));
   return root;
 }
 async function change(root, mutate, name='000001.json') {
