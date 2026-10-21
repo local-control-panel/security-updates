@@ -4,26 +4,6 @@ Public security advisories and reviewed remediation packages from [Local Control
 
 **Current scope:** the catalog publisher, public website, package validation and engine integration contract. The Operations Engine consumer, unattended execution and panel integration are separate work. The initial PHP advisory has **no executable fix**: this repository does not claim to have patched any server.
 
-## Cloudflare Pages
-
-Connect this repository through **Workers & Pages → Create → Pages → Connect to Git**:
-
-| Setting | Value |
-| --- | --- |
-| Framework preset | None |
-| Production branch | `main` |
-| Build command | `npm run check` |
-| Build output directory | `dist` |
-| Node.js | `22` (also pinned in `.node-version`) |
-
-Connect the custom subdomain in the Pages project's Custom domains settings. No GitHub token or API key is needed in the site or client engine. Feed, manifest and payload requests go to Pages, not GitHub redirects. `_headers` configures revalidation for the discovery feed and immutable caching for release files. A real `404.html` prevents Pages' SPA fallback from answering missing feed files with the homepage.
-
-See [Cloudflare Git integration](https://developers.cloudflare.com/pages/configuration/git-integration/), [build configuration](https://developers.cloudflare.com/pages/configuration/build-configuration/) and [serving Pages](https://developers.cloudflare.com/pages/configuration/serving-pages/).
-
-**Publishing model:** a reviewed merge to protected `main` is publication. Cloudflare builds/tests that commit and deploys the complete static artifact. Feature branches are previews, never client feed origins. There is no separate mutable file edited on the hosting server and no requirement to create a GitHub Release. Configure the engine with the production custom domain only.
-
-Before connecting production, verify the repository ruleset requires the `check` CI status and owner review, protects `main` against deletion/force-push, and restricts bypass privileges. CODEOWNERS alone does not enforce this. Restrict Cloudflare deploy and DNS permissions too. GitHub/Cloudflare administrators remain part of the trust boundary; hashes from the same origin are integrity checks, not independent publisher signatures.
-
 ## Publish an advisory or fix
 
 1. Open an issue or PR with an authoritative upstream source and affected platforms.
