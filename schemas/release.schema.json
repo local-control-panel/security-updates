@@ -1,0 +1,340 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/local-control-panel/security-updates/blob/main/schemas/release.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "sequence",
+    "publishedAt",
+    "expiresAt",
+    "advisories",
+    "fixes",
+    "revoked"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "sequence": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "publishedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "expiresAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "advisories": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "title",
+          "severity",
+          "status",
+          "publishedAt",
+          "updatedAt",
+          "summary",
+          "affected",
+          "recommendations",
+          "references",
+          "cves"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+            "maxLength": 100
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          },
+          "severity": {
+            "enum": [
+              "critical",
+              "high",
+              "medium",
+              "low",
+              "informational"
+            ]
+          },
+          "status": {
+            "enum": [
+              "investigating",
+              "action-required",
+              "resolved",
+              "withdrawn"
+            ]
+          },
+          "publishedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "summary": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          },
+          "affected": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2000
+            },
+            "maxItems": 1000
+          },
+          "recommendations": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2000
+            },
+            "maxItems": 1000
+          },
+          "references": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "label",
+                "url"
+              ],
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 2000
+                },
+                "url": {
+                  "type": "string",
+                  "format": "uri",
+                  "pattern": "^https://",
+                  "maxLength": 2000
+                }
+              }
+            },
+            "maxItems": 1000
+          },
+          "cves": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^CVE-[0-9]{4}-[0-9]{4,}$"
+            },
+            "maxItems": 1000
+          }
+        }
+      },
+      "maxItems": 1000
+    },
+    "fixes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "version",
+          "advisoryId",
+          "title",
+          "minEngine",
+          "platforms",
+          "capabilities",
+          "requiresRestart",
+          "disruption",
+          "recovery",
+          "check",
+          "apply",
+          "verify",
+          "review"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+            "maxLength": 100
+          },
+          "version": {
+            "type": "string",
+            "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+          },
+          "advisoryId": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+            "maxLength": 100
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          },
+          "minEngine": {
+            "type": "string",
+            "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+          },
+          "platforms": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2000
+            },
+            "maxItems": 1000
+          },
+          "capabilities": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2000
+            },
+            "maxItems": 1000
+          },
+          "requiresRestart": {
+            "type": "boolean"
+          },
+          "disruption": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          },
+          "recovery": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          },
+          "check": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "file",
+              "runtime"
+            ],
+            "properties": {
+              "file": {
+                "type": "string",
+                "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._-]*\\.(sh|py)$",
+                "maxLength": 100
+              },
+              "runtime": {
+                "enum": [
+                  "bash",
+                  "python3"
+                ]
+              }
+            }
+          },
+          "apply": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "file",
+              "runtime"
+            ],
+            "properties": {
+              "file": {
+                "type": "string",
+                "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._-]*\\.(sh|py)$",
+                "maxLength": 100
+              },
+              "runtime": {
+                "enum": [
+                  "bash",
+                  "python3"
+                ]
+              }
+            }
+          },
+          "verify": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "file",
+              "runtime"
+            ],
+            "properties": {
+              "file": {
+                "type": "string",
+                "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._-]*\\.(sh|py)$",
+                "maxLength": 100
+              },
+              "runtime": {
+                "enum": [
+                  "bash",
+                  "python3"
+                ]
+              }
+            }
+          },
+          "review": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "source",
+              "evidence"
+            ],
+            "properties": {
+              "source": {
+                "type": "string",
+                "format": "uri",
+                "pattern": "^https://",
+                "maxLength": 2000
+              },
+              "evidence": {
+                "type": "string",
+                "format": "uri",
+                "pattern": "^https://",
+                "maxLength": 2000
+              }
+            }
+          }
+        }
+      },
+      "maxItems": 1000
+    },
+    "revoked": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "version",
+          "reason"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+            "maxLength": 100
+          },
+          "version": {
+            "type": "string",
+            "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          }
+        }
+      },
+      "maxItems": 1000
+    }
+  }
+}

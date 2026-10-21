@@ -1,0 +1,20 @@
+{
+  "name": "@local-control-panel/security-updates",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "seal": "node scripts/seal.mjs",
+    "build": "node scripts/build.mjs",
+    "test": "node --test",
+    "check": "npm test && npm run build",
+    "dev": "node scripts/serve.mjs"
+  },
+  "devDependencies": {
+    "ajv": "8.20.0",
+    "ajv-formats": "3.0.1"
+  }
+}

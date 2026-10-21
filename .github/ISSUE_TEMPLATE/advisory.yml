@@ -1,0 +1,22 @@
+name: Advisory or remediation request
+description: Share a public upstream advisory or help with a fix.
+body:
+  - type: markdown
+    attributes:
+      value: For private security reports about this project, follow SECURITY.md. Do not include credentials, client inventories or private logs.
+  - type: input
+    id: source
+    attributes:
+      label: Public upstream advisory URL
+    validations:
+      required: true
+  - type: textarea
+    id: affected
+    attributes:
+      label: Affected platforms and versions
+    validations:
+      required: true
+  - type: textarea
+    id: help
+    attributes:
+      label: Proposed fix or test evidence

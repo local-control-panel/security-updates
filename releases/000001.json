@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "sequence": 1,
+  "publishedAt": "2026-10-21T18:46:51Z",
+  "expiresAt": "2026-11-20T18:46:51Z",
+  "advisories": [
+    {
+      "id": "php-critical-rce-2026-10",
+      "title": "Critical PHP vulnerabilities: update web-serving runtimes",
+      "severity": "critical",
+      "status": "action-required",
+      "publishedAt": "2026-10-21T14:00:00Z",
+      "updatedAt": "2026-10-21T18:46:51Z",
+      "summary": "PHP has released fixes for two vulnerabilities that can allow unauthenticated remote code execution. FrankenPHP is among the affected web-serving runtimes. No automatic remediation package has been published in this catalog yet.",
+      "affected": [
+        "PHP installations serving web requests, including PHP-FPM, mod_php, CGI, FrankenPHP and LiteSpeed.",
+        "Package versions require vendor-aware assessment: distributions may backport fixes."
+      ],
+      "recommendations": [
+        "Update to PHP 8.2.35, 8.3.36, 8.4.27 or 8.5.12, or a later supported release containing these fixes; consult the distribution vendor for backported packages.",
+        "For container deployments, use a verified patched image and replace the running containers. Downloading an image alone does not update the serving runtime.",
+        "Confirm the active web runtime after replacement. Temporary mitigations are incomplete; follow the upstream advisory."
+      ],
+      "references": [
+        {
+          "label": "PHP official security advisory",
+          "url": "https://www.php.net/archive/2026.php#2026-10-21-1"
+        }
+      ],
+      "cves": [
+        "CVE-2026-109618",
+        "CVE-2026-109619"
+      ]
+    }
+  ],
+  "fixes": [],
+  "revoked": []
+}
