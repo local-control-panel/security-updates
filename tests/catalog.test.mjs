@@ -14,7 +14,7 @@ async function build(root) {
 }
 const source = resolve(import.meta.dirname, '..');
 async function fixture(t) {
-  const root = await mkdtemp(join(tmpdir(), 'lcp-security-'));
+  const root = await mkdtemp(join(tmpdir(), 'orbden-security-'));
   t.after(() => rm(root, { recursive:true, force:true }));
   for (const dir of ['schemas','web']) await cp(join(source,dir), join(root,dir), { recursive:true });
   // Build each test scenario from the immutable bootstrap, independently of

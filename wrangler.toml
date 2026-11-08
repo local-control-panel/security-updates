@@ -1,3 +1,4 @@
+# Public address: https://updates.orbden.com (custom domain on this Pages project)
 # Pages Git build command: pnpm check
 # Pages build environment: PNPM_VERSION=12.14.0
 name = "wcp-security-updates"

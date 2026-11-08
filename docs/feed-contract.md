@@ -4,7 +4,7 @@ Status: publisher implemented; engine consumer and execution remain to be implem
 
 ## Discovery
 
-Poll `GET /feed/v1/index.json` on the **configured production HTTPS origin** approximately hourly, with jitter, conditional requests and failure backoff. Do not use GitHub or preview deployment URLs as an automatic fallback. The publisher uses Cloudflare Pages ETags and `_headers` revalidation.
+Poll `GET /feed/v1/index.json` on the **configured production HTTPS origin** (`https://updates.orbden.com`) approximately hourly, with jitter, conditional requests and failure backoff. Do not use GitHub or preview deployment URLs as an automatic fallback. The publisher uses Cloudflare Pages ETags and `_headers` revalidation.
 
 ```json
 {
